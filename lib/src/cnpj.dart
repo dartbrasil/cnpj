@@ -1,14 +1,14 @@
-import 'package:burocracia/src/util/generate.dart';
+import 'package:cnpj/src/util/generate.dart';
 
-String generateCNPJ({bool formatted = false}) {
+String gerarCNPJ({bool formatted = false}) {
   List<int> n = randomizer(12);
   n
-    ..add(generateCNPJValidationNumber(n))
-    ..add(generateCNPJValidationNumber(n));
-  return formatted ? formatCNPJ(n) : n.join();
+    ..add(gerarDigitoVerificador(n))
+    ..add(gerarDigitoVerificador(n));
+  return formatted ? formatar(n) : n.join();
 }
 
-int generateCNPJValidationNumber(List<int> digits) {
+int gerarDigitoVerificador(List<int> digits) {
   int baseNumber = 0;
   List<int> firstBlock = digits.getRange(0, digits.length - 8).toList();
   List<int> secondBlock = digits.getRange(digits.length - 8, digits.length).toList();
@@ -22,16 +22,16 @@ int generateCNPJValidationNumber(List<int> digits) {
   return verificationBase < 2 ? 0 : 11 - verificationBase;
 }
 
-bool validateCNPJ(String cnpj) {
+bool validarCNPJ(String cnpj) {
   List<int> sanitizedCNPJ = cnpj
     .replaceAll(new RegExp(r'\.|-|\/'), '')
     .split('')
     .map((String digit) => int.parse(digit))
     .toList();
   return
-    sanitizedCNPJ[12] == generateCNPJValidationNumber(sanitizedCNPJ.getRange(0, 12).toList()) &&
-    sanitizedCNPJ[13] == generateCNPJValidationNumber(sanitizedCNPJ.getRange(0, 13).toList());
+    sanitizedCNPJ[12] == gerarDigitoVerificador(sanitizedCNPJ.getRange(0, 12).toList()) &&
+    sanitizedCNPJ[13] == gerarDigitoVerificador(sanitizedCNPJ.getRange(0, 13).toList());
 }
 
-String formatCNPJ(List<int> n) =>
+String formatar(List<int> n) =>
   '${n[0]}${n[1]}.${n[2]}${n[3]}${n[4]}.${n[5]}${n[6]}${n[7]}/${n[8]}${n[9]}${n[10]}${n[11]}-${n[11]}${n[12]}';
